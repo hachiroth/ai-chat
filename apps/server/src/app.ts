@@ -1,11 +1,8 @@
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import express from 'express'
 import session from 'express-session'
 import routes from './routes'
-
-dotenv.config({ quiet: true })
 
 const app = express()
 app.use(cors())
