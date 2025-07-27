@@ -36,6 +36,7 @@ export default (options?: RouteInstallerOption): Router => {
 
   for (const file of files) {
     const name = path.basename(file, path.extname(file))
+    // BUG: Can not join to a correct path when prefix is no passed.
     const routePath = path.posix.join(prefix, name)
     const modulePath = path.join(dir, file)
     const module = require(modulePath)

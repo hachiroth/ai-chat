@@ -1,0 +1,37 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>SSE Demo</title>
+</head>
+
+<body>
+  <h1>SSE 示例</h1>
+  <div id="output"></div>
+
+  <!-- <script>
+    const output = document.getElementById('output')
+    const evtSource = new EventSource('/api/chat/cid/tid')
+
+    evtSource.onmessage = function (event) {
+      try {
+        const data = JSON.parse(event.data)
+        console.log('收到数据:', data)
+        const p = document.createElement('p')
+        p.textContent = data.content || data.event || event.data
+        output.appendChild(p)
+      } catch (e) {
+        console.error('解析 SSE 数据失败', e)
+      }
+    }
+
+
+    evtSource.onerror = function () {
+      console.error('SSE 连接出错，可能已断开')
+    }
+  </script> -->
+</body>
+
+</html>
