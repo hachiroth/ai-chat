@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin "flyonui" {
+  themes: all;
+  exclude: scrollbar;
+}
+@plugin "@iconify/tailwind4";
+@import "./utility.css";
