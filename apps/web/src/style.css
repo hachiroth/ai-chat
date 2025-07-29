@@ -1,7 +1,43 @@
 @import "tailwindcss";
 @plugin "flyonui" {
-  themes: all;
+  themes: light --default, dark --prefersdark;
   exclude: scrollbar;
 }
 @plugin "@iconify/tailwind4";
 @import "./utility.css";
+
+html[data-theme="dark"] .shiki,
+html[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+#app {
+  @apply w-full min-h-screen flex;
+}
+
+::view-transition-group(*) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+.shiki {
+  @apply p-4 rounded scroll-area w-full!;
+}
+
+.assistant-reply .shiki {
+  @apply my-4;
+}
+.assistant-reply:has(:first-child:is(.shiki)) .shiki {
+  @apply my-0!;
+}
+
+.input {
+  @apply rounded;
+}
+.btn:not(.btn-circle) {
+  @apply rounded shadow-none;
+}

@@ -1,7 +1,7 @@
 {
-  "name": "web",
+  "name": "@ai-chat/web",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -13,12 +13,17 @@
   "dependencies": {
     "@iconify-json/mingcute": "^1.2.3",
     "@iconify/tailwind4": "^1.0.6",
+    "@shikijs/markdown-it": "^3.8.1",
     "@tailwindcss/vite": "^4.1.11",
     "flyonui": "^2.3.1",
+    "markdown-it": "^14.1.0",
+    "markdown-it-async": "^2.2.0",
     "pinia": "^3.0.3",
+    "shiki": "^3.8.1",
     "tailwindcss": "^4.1.11",
     "vue": "^3.5.17",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
