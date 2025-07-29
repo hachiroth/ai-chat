@@ -29,6 +29,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@ai-chat/typed':
+        specifier: workspace:^
+        version: link:../../packages/typed
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
@@ -121,6 +124,9 @@ importers:
         specifier: 2.0.0-rc.5
         version: 2.0.0-rc.5(vue@3.5.18(typescript@5.8.3))
     devDependencies:
+      '@ai-chat/typed':
+        specifier: workspace:^
+        version: link:../../packages/typed
       '@tsconfig/node22':
         specifier: ^22.0.2
         version: 22.0.2
