@@ -1,16 +1,18 @@
 <script setup lang="ts">
   import api from '@/api'
   import ChatInput from '@/components/ChatInput.vue'
+import { useConversationStore } from '@/stores'
   import { useRouter } from 'vue-router'
 
+  const conversationStore = useConversationStore()
   const router = useRouter()
 
   async function onSend(userInput: string) {
     try {
       const conversation = await api.conversations.create()
-      const context = await api.contexts.create(userInput, conversation._id)
+      await api.contexts.create(userInput, conversation._id)
       router.push({ name: '/[id]', params: { id: conversation._id } })
-      api.ai.chat(conversation._id, context._id)
+      conversationStore.addConversation({...conversation})
     } catch (err) {
       console.error(err)
     }

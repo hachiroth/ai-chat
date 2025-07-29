@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
-  import { useUserStore } from '@/stores'
+  import { useConversationStore, useUserStore } from '@/stores'
   import api from '@/api'
   import type { IConversation } from '@ai-chat/typed'
-  import { useRoute } from 'vue-router'
   import { formatRelativeDate } from '@/utils'
   import Tooltip from '@/components/Tooltip.vue'
 
   const userStore = useUserStore()
+  const conversationStore = useConversationStore()
 
   const isChecking = ref(false)
   const asideMens = [
@@ -15,7 +15,7 @@
     { label: '搜索对话', icon: 'icon-[mingcute--list-search-line]' },
   ]
   const isCollapse = ref(true)
-  const conversations = ref<IConversation[]>([])
+  const conversationHistory = ref<IConversation[]>( conversationStore.conversations)
 
   function toggleCollapse() {
     isCollapse.value = !isCollapse.value
@@ -26,7 +26,8 @@
     const resp = await userStore.me()
     isChecking.value = false
     if (resp && resp._id) {
-      conversations.value = await api.users.conversations(resp._id)
+     conversationHistory.value = await api.users.conversations(resp._id)
+     conversationStore.conversations = conversationHistory.value
     }
   })
 </script>
@@ -57,10 +58,10 @@
         </span>
       </div>
     </div>
-    <ul v-if="userStore.isLoggedIn" class="menu grow scroll-area overflow-x-hidden mr-1 whitespace-nowrap transition-opacity duration-300"
+    <ul v-if="userStore.isLoggedIn" class="menu flex-nowrap grow scroll-area overflow-x-hidden mr-1 whitespace-nowrap transition-opacity duration-300"
       :class="{ 'opacity-0': isCollapse }">
       <li class="menu-title font-bold opacity-80">历史对话</li>
-      <li v-for="item in conversations" :key="item._id">
+      <li v-for="item in conversationHistory" :key="item._id">
         <RouterLink :to="{ name: '/[id]', params: { id: item._id } }"
           class="flex flex-col  gap-0 items-start font-bold whitespace-nowrap rounded"
           :class="{ 'menu-active': item._id === ($route.params as any)?.id }">

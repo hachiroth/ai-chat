@@ -1,4 +1,3 @@
-// composables/useSSE.ts
 import { ref } from 'vue'
 
 export function useSSE() {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onDeactivated, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onActivated, onDeactivated, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async'
 import { codeToHtml } from 'shiki'
 import MarkdownItAsync from 'markdown-it-async'
@@ -21,8 +21,6 @@ const id = computed(() => (route.params as any).id)
 const chattingList = ref<IEnhancedContext[]>([])
 const input = ref('')
 const anchor = useTemplateRef<HTMLDivElement>('anchor')
-const title = ref<string | null>(null)
-const isLeaving = ref(false)
 
 const md = MarkdownItAsync()
 md.use(fromAsyncCodeToHtml(codeToHtml, {
@@ -74,6 +72,13 @@ onMounted(async () => {
     rawText: item.role === 'assistant' ? item.content : undefined,
     renderedHtml: item.role === 'assistant' ? '' : undefined,
   }))
+
+  if (chattingList.value.length === 1) {
+    const last = chattingList.value[0]
+    if (last.role === 'user') {
+      connect(`http://localhost:3000/api/chat/${id.value}/${last._id}`)
+    }
+  }
   
   // Render assistant's markdown in history.
   for (const item of chattingList.value) {
@@ -82,6 +87,10 @@ onMounted(async () => {
     }
   }
 
+  scrollToBottom()
+})
+
+onActivated(() => {
   scrollToBottom()
 })
 
