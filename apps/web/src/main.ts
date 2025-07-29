@@ -6,6 +6,7 @@ import Toast from 'vue-toastification'
 import App from './App.vue'
 import router from './router'
 import 'flyonui/dist/tooltip'
+import 'flyonui/dist/dropdown'
 import './style.css'
 import 'vue-toastification/dist/index.css'
 

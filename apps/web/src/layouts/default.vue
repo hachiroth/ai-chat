@@ -1,11 +1,14 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, watch } from 'vue'
   import { useConversationStore, useUserStore } from '@/stores'
   import api from '@/api'
   import type { IConversation } from '@ai-chat/typed'
   import { formatRelativeDate } from '@/utils'
   import Tooltip from '@/components/Tooltip.vue'
+  import Dropdown from '@/components/Dropdown.vue'
+import { useRoute } from 'vue-router'
 
+  const route = useRoute()
   const userStore = useUserStore()
   const conversationStore = useConversationStore()
 
@@ -15,10 +18,24 @@
     { label: '搜索对话', icon: 'icon-[mingcute--list-search-line]' },
   ]
   const isCollapse = ref(true)
-  const conversationHistory = ref<IConversation[]>( conversationStore.conversations)
+  const conversationHistory = ref<IConversation[]>(conversationStore.conversations)
+  const renamedId = ref<string | null>(null)
 
   function toggleCollapse() {
     isCollapse.value = !isCollapse.value
+  }
+
+  async function rename(id: string) {
+    renamedId.value = id
+  }
+
+  async function handleRenameConfirm(item: IConversation) {
+    await api.conversations.setTitle(item._id, item.title)
+    renamedId.value = null
+  }
+
+  function handleRenameCancel() {
+    renamedId.value = null
   }
 
   onMounted(async () => {
@@ -26,9 +43,21 @@
     const resp = await userStore.me()
     isChecking.value = false
     if (resp && resp._id) {
-     conversationHistory.value = await api.users.conversations(resp._id)
-     conversationStore.conversations = conversationHistory.value
+      conversationHistory.value = await api.users.conversations(resp._id)
+      conversationStore.conversations = conversationHistory.value
     }
+  })
+
+  watch([route, conversationHistory], ([route]) => {
+    if(route.name === '/[id]') {
+      const conversationId =route.params.id
+      const current = conversationHistory.value.filter(item => item._id === conversationId)[0]
+      document.title = `${current?.title || '新对话'} | AI Chat`
+    }else {
+      document.title = 'AI Chat'
+    }
+  }, {
+    immediate: true
   })
 </script>
 
@@ -58,18 +87,43 @@
         </span>
       </div>
     </div>
-    <ul v-if="userStore.isLoggedIn" class="menu flex-nowrap grow scroll-area overflow-x-hidden mr-1 whitespace-nowrap transition-opacity duration-300"
+    <ul v-if="userStore.isLoggedIn"
+      class="flex-nowrap grow scroll-area overflow-x-hidden mr-1 whitespace-nowrap transition-opacity duration-300 p-4 pt-0 space-y-1"
       :class="{ 'opacity-0': isCollapse }">
-      <li class="menu-title font-bold opacity-80">历史对话</li>
-      <li v-for="item in conversationHistory" :key="item._id">
-        <RouterLink :to="{ name: '/[id]', params: { id: item._id } }"
-          class="flex flex-col  gap-0 items-start font-bold whitespace-nowrap rounded"
-          :class="{ 'menu-active': item._id === ($route.params as any)?.id }">
-          <span class="text-xs opacity-80">
+      <li class="text-sm font-bold opacity-80 px-2 mb-3">历史对话</li>
+      <li v-for="item in conversationHistory" :key="item._id"
+        class="flex items-center px-3 py-2 hover:bg-neutral/10 rounded transition-all duration-300 cursor-pointer group"
+        :class="{ 'bg-primary/10!': item._id === ($route.params as any)?.id }">
+        <div v-if="item._id === renamedId" class="grow mr-2 h-[35.99px] flex items-center">
+          <input v-model="item.title" type="text" class="input input-sm w-full" @keyup.enter="handleRenameConfirm(item)" autofocus
+          @blur="handleRenameCancel" :placeholder="item.title || '新对话'" />
+        </div>
+        <RouterLink v-else :to="{ name: '/[id]', params: { id: item._id } }"
+          class="grow flex flex-col items-start font-bold whitespace-nowrap">
+          <span class="text-xs opacity-80 ">
             {{ formatRelativeDate(item.createdAt) }}
           </span>
-          <span class="grow text-sm">{{ item.title || '新对话' }}</span>
+          <span class="grow text-sm line-clamp-1">{{ item.title || '新对话' }}</span>
         </RouterLink>
+        <Dropdown :id="`conversation-${item._id}`" v-if="!renamedId">
+          <template #toggle>
+            <span :id="`conversation-${item._id}`"
+              class="icon-[mingcute--more-1-fill] size-6 cursor-pointer hover:text-primary transition-all duration-300 opacity-0 group-hover:opacity-100"></span>
+          </template>
+          <template #menu>
+            <div class="w-28">
+              <div class="dropdown-item rounded text-sm py-2 px-3" @click="rename(item._id)">
+                <span class="icon-[mingcute--edit-3-line]"></span>
+                重命名
+              </div>
+              <div class="divider my-1.5 opacity-80"></div>
+              <div class="dropdown-item rounded text-sm py-2 px-3 text-bg-soft-error hover:text-bg-error!">
+                <span class="icon-[mingcute--delete-2-line]"></span>
+                删除
+              </div>
+            </div>
+          </template>
+        </Dropdown>
       </li>
     </ul>
     <RouterLink v-if="userStore.isLoggedIn" to="/"

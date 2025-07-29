@@ -10,4 +10,5 @@ interface EventSourceEventMap {
 
 interface Window {
   HSTooltip: typeof import('flyonui/flyonui').HSTooltip
+  HSDropdown: typeof import('flyonui/flyonui').HSDropdown
 }

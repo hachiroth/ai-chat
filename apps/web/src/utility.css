@@ -7,6 +7,7 @@
   --s: transparent;
   transition: --s 0.5s ease;
   overflow: auto;
+  overscroll-behavior: contain;
 
   &::-webkit-scrollbar {
     width: 8px !important; 
