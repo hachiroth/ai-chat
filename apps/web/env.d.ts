@@ -7,3 +7,7 @@ interface EventSourceEventMap {
   replying: MessageEvent<string>
   end: MessageEvent<string>
 }
+
+interface Window {
+  HSTooltip: typeof import('flyonui/flyonui').HSTooltip
+}

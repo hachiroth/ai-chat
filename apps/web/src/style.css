@@ -3,6 +3,8 @@
   themes: light --default, dark --prefersdark;
   exclude: scrollbar;
 }
+@import "../node_modules/flyonui/variants.css";
+@source "../node_modules/flyonui/dist/tooltip.js";
 @plugin "@iconify/tailwind4";
 @import "./utility.css";
 

@@ -18,4 +18,8 @@ router.beforeResolve((to, from, next) => {
   }
 })
 
+router.afterEach(async (_, __, failure) => {
+  if (!failure)
+    setTimeout(() => window.HSTooltip.autoInit(), 100)
+})
 export default router

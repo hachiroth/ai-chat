@@ -8,7 +8,7 @@ export function useSSE() {
   let eventSource: EventSource | null = null
 
   const connect = (url: string) => {
-    eventSource = new EventSource(url, {withCredentials: true})
+    eventSource = new EventSource(url, { withCredentials: true })
 
     eventSource.onopen = () => {
       isConnected.value = true
