@@ -28,6 +28,7 @@
     "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
+    "@ai-chat/typed": "workspace:^",
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.15.32",
     "@vitejs/plugin-vue": "^6.0.0",
