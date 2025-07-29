@@ -1,1 +1,1 @@
-export * from './checkLogin'
+export * from './requireLogin'
