@@ -21,4 +21,4 @@ const contextSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-export const Context = mongoose.models.Context || mongoose.model('Context', contextSchema)
+export const Context = mongoose.model('Context', contextSchema)

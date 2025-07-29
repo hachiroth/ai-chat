@@ -1,6 +1,5 @@
 import type { RequestHandler } from 'express'
 import expressAsyncHandler from 'express-async-handler'
-import { ChatMessage, ModelVersion } from 'spark-node-sdk'
 import { Context } from '@/models'
 
 /**
@@ -11,22 +10,35 @@ export const chat: RequestHandler = expressAsyncHandler(async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache')
   res.setHeader('Connection', 'keep-alive')
 
-  const uid = req.session.uid
+  const uid = req.session.uid || null
   const { conversationId, contextId } = req.params
 
-  const context = await Context.findOne({ uid, conversationId, _id: contextId }).lean()
+  const context = await Context.findOne<typeof Context>({ uid, conversationId, _id: contextId }).lean()
 
-  const content = (context as any).content
+  const content = context!.content
 
   try {
-    const stream = req.app.locals.spark.chatAsStreamAsync(ModelVersion.V1_5, [ChatMessage.fromUser(content)])
+    const stream = req.app.locals.spark.chat(conversationId, [{
+      role: 'user',
+      content,
+    }])
 
+    let reply = ''
     for await (const chunk of stream) {
-      if (chunk.uasge) {
-        res.write(`event: end\ndata: done\n\n`)
+      if (chunk === '[DONE]') {
+        res.write(`event: end\ndata: [DONE]\n\n`)
+        await Context.create({
+          uid,
+          role: 'assistant',
+          content: reply,
+          conversationId,
+          replyTo: contextId,
+        })
+        reply = ''
       }
       else {
-        res.write(`event: replying\ndata: ${chunk.text}\n\n`)
+        reply += chunk
+        res.write(`event: replying\ndata: ${chunk}\n\n`)
       }
     }
   }

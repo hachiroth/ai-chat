@@ -1,5 +1,5 @@
 import type { Session } from 'express-session'
-import type { SparkClient } from 'spark-node-sdk'
+import type { Spark } from '@/Spark'
 
 declare module 'express-session' {
   interface Session {
@@ -17,6 +17,7 @@ declare global {
       SPARK_SECRET: string
       SPARK_KEY: string
       MONGO_URI: string
+      SPARK_API_PASSWORD: string
     }
   }
 
@@ -25,10 +26,9 @@ declare global {
       session: Session
     }
     interface Response {}
-    interface Locals {}
     interface Application {}
     interface Locals {
-      spark: SparkClient
+      spark: Spark
     }
   }
 }

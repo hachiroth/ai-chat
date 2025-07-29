@@ -3,8 +3,8 @@ import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
 import mongoose from 'mongoose'
-import { SparkClient } from 'spark-node-sdk'
 import routes from './routes'
+import { Spark } from './Spark'
 
 const app = express()
 app.use(express.static('public'))
@@ -43,9 +43,7 @@ async function connectMongodb() {
 
 app.use(routes({ prefix: '/api' }))
 
-const { SPARK_SECRET, SPARK_KEY, SPARK_ID: SPARK_APP_ID } = process.env
-// Create spark client instance.
-app.locals.spark = new SparkClient(SPARK_APP_ID, SPARK_KEY, SPARK_SECRET)
+app.locals.spark = new Spark({ apiPassword: process.env.SPARK_API_PASSWORD })
 
 connectMongodb().then(() => {
   app.listen(PORT, () => {
