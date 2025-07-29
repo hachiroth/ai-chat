@@ -1,0 +1,19 @@
+{
+  "name": "@ai-chat/typed",
+  "version": "1.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.7.1",
+  "description": "Type definition of AI chat.",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsup"
+  }
+}
