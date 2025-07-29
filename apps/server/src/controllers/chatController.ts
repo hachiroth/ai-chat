@@ -15,6 +15,7 @@ export const chat: RequestHandler = expressAsyncHandler(async (req, res) => {
 
   const context = await Context.findOne<typeof Context>({ uid, conversationId, _id: contextId }).lean()
 
+  if(!context) return
   const content = context!.content
 
   try {

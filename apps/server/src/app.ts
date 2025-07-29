@@ -7,8 +7,15 @@ import routes from './routes'
 import { Spark } from './Spark'
 
 const app = express()
+
+const PORT = process.env.PORT || '8080'
+const isDev = process.env.NODE_ENV === 'development'
+
 app.use(express.static('public'))
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -16,10 +23,11 @@ app.use(session({
   secret: process.env.SECRET || 'No secret',
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: !isDev,
+    sameSite: 'lax'
+  },
 }))
-
-const PORT = process.env.PORT || '8080'
-const isDev = process.env.NODE_ENV === 'development'
 
 app.get('/', (_, res) => {
   res.send('Hi, Express!')

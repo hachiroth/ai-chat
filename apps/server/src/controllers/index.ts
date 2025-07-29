@@ -1,3 +1,5 @@
+export * as authController from './authController'
 export * as chatController from './chatController'
 export * as contextController from './contextController'
 export * as conversationController from './conversationController'
+export * as userController from './userController'
