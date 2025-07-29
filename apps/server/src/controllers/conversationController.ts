@@ -12,13 +12,15 @@ export const create: RequestHandler = expressAsyncHandler(async (req, res) => {
 })
 
 export const resume: RequestHandler = expressAsyncHandler(async (req, res) => {
-  const uid = req.session?.uid
+  const uid = req.session?.uid || null
   const { conversationId } = req.params
 
   const contexts = await Context.find({ conversationId }).lean()
 
   if (contexts[0].uid !== uid) {
-    res.status(403).json({ message: 'You have no right to access this conversation' })
+    res.status(403).json({
+      message: 'You have no right to access this conversation',
+    })
     return
   }
 

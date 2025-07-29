@@ -95,7 +95,6 @@ onActivated(() => {
 })
 
 watch(data, async (chunk) => {
-  console.log(chunk)
   let last = chattingList.value[chattingList.value.length - 1]
 
   // Insert one if there no assistant or the last one is not assistant.
@@ -113,7 +112,6 @@ watch(data, async (chunk) => {
   }
  
   if (chunk === null || chunk === '') {
-    console.log('Is null')
     last.rawText! += '\n'
   } else {
     last.rawText! += chunk

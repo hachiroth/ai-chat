@@ -7,10 +7,12 @@
   "author": "",
   "license": "ISC",
   "keywords": [],
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "build": "tsup"
+    "dev": "pnpm run gen:routes && tsx src/index.ts",
+    "gen:routes": "tsx ./src/scripts/gen-routes.ts",
+    "build": "pnpm run gen:routes && tsup",
+    "start": "node ./dist/index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

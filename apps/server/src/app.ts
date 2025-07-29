@@ -6,44 +6,47 @@ import mongoose from 'mongoose'
 import routes from './routes'
 import { Spark } from './Spark'
 
-const app = express()
+(function checkEnvironment() {
+  try {
+    const { PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI } = process.env
+    console.debug('Environment variables:', PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI)
+  }
+  catch (err) {
+    throw new Error(`Miss required environment variable. ${err}`)
+  }
+})()
 
-const PORT = process.env.PORT || '8080'
-const isDev = process.env.NODE_ENV === 'development'
+const app = express()
+const PORT = process.env.PORT
+const isDev = process.env.NODE_ENV
 
 app.use(express.static('public'))
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
+  origin: ['http://localhost:5173', 'http://localhost:4173'],
+  credentials: true,
 }))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
-  secret: process.env.SECRET || 'No secret',
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: !isDev,
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true
+    httpOnly: true,
   },
 }))
 
-app.get('/', (_, res) => {
-  res.send('Hi, Express!')
-})
-
 async function connectMongodb() {
-  const URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ai-chat'
+  const URI = process.env.MONGO_URI
 
   try {
     await mongoose.connect(URI)
 
-    if (isDev) {
-      console.debug('🎉 MongoDB connected.')
-    }
+    console.debug('🎉 MongoDB connected.')
   }
   catch (error) {
     console.error('❌ MongoDB connection failed:', error)
@@ -57,8 +60,6 @@ app.locals.spark = new Spark({ apiPassword: process.env.SPARK_API_PASSWORD })
 
 connectMongodb().then(() => {
   app.listen(PORT, () => {
-    if (isDev) {
-      console.debug(`Server run on port ${PORT}`)
-    }
+    console.debug(`Server run on port ${PORT}`)
   })
 })

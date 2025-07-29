@@ -12,7 +12,8 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "dev": "pnpm -r run dev",
-    "build": "pnpm -r run build"
+    "build": "pnpm -r run build",
+    "start": "pnpm -r run start"
   },
   "devDependencies": {
     "@ai-chat/typed": "workspace:^",
