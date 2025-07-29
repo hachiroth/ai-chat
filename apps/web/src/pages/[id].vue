@@ -22,7 +22,7 @@ const chattingList = ref<IEnhancedContext[]>([])
 const input = ref('')
 const anchor = useTemplateRef<HTMLDivElement>('anchor')
 
-const md = MarkdownItAsync()
+const md = MarkdownItAsync({breaks: true})
 md.use(fromAsyncCodeToHtml(codeToHtml, {
   themes: {
     light: 'github-light',
@@ -111,9 +111,13 @@ watch(data, async (chunk) => {
     chattingList.value.push(streamingContext)
     last = streamingContext
   }
-  
-  last.rawText! += chunk
-  // last.renderedHtml = await md.renderAsync(fixUnclosedCodeBlocks(last.rawText!))
+ 
+  if (chunk === null || chunk === '') {
+    console.log('Is null')
+    last.rawText! += '\n'
+  } else {
+    last.rawText! += chunk
+  }
 
   if (isCodeBlockClosed(last.rawText!)) {
     try {

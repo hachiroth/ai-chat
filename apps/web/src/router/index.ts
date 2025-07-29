@@ -23,6 +23,7 @@ router.afterEach(async (_, __, failure) => {
     setTimeout(() => {
       window.HSTooltip.autoInit()
       window.HSDropdown.autoInit()
+      window.HSOverlay.autoInit()
     }, 100)
 })
 export default router

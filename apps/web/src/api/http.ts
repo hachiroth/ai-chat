@@ -1,5 +1,6 @@
 type IResponse<T> = {
   message?: string
+  success?: boolean
 } & T
 
 export function http(baseURL: string) {
@@ -15,7 +16,7 @@ export function http(baseURL: string) {
         'Content-Type': 'application/json',
         ...(options.headers || {}),
       },
-      credentials: 'include'
+      credentials: 'include',
     })
 
     if (!res.ok) {
@@ -38,7 +39,7 @@ export function http(baseURL: string) {
         method: 'PUT',
         body: data ? JSON.stringify(data) : undefined,
       }),
-    delete: (path: string) =>
+    delete: <T = unknown>(path: string): Promise<IResponse<T>> =>
       request(path, {
         method: 'DELETE',
       }),

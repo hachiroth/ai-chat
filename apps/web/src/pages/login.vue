@@ -16,18 +16,30 @@ const toast = useToast()
 const username = ref('')
 const password = ref('')
 
+function validState(): boolean {
+  if (username.value.trim() === '' || password.value.trim() === '') {
+    toast.error('请输入用户名和密码')
+    return false
+  }
+  return true
+}
+
 async function onLogin() {
+  if (!validState()) return
+
   const resp = await userStore.login(username.value, password.value)
-  if(resp.message) {
+  if (resp.message) {
     toast.error(resp.message)
-  }else {
+  } else {
     router.replace('/')
   }
 }
 
 async function onRegister() {
+  if (!validState()) return
+
   const resp = await api.auth.register(username.value, password.value)
-  if(resp.message) {
+  if (resp.message) {
     toast.error(resp.message)
   }
 }

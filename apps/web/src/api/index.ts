@@ -1,12 +1,13 @@
 import type { IContext, IConversation, IUser } from '@ai-chat/typed'
 import { http } from './http'
 
-const { get, post, put } = http('http://localhost:3000/api/')
+const { get, post, put, delete: remove } = http('http://localhost:3000/api/')
 
 const conversations = {
   create: () => post<IConversation>('conversations'),
   resume: (id: string) => get<IContext[]>(`conversations/${id}`),
-  setTitle: (id: string, title: string) => put(`conversations/${id}`, {title})
+  setTitle: (id: string, title: string) => put(`conversations/${id}`, { title }),
+  remove: (id: string) => remove(`conversations/${id}`),
 }
 
 const contexts = {
@@ -34,7 +35,7 @@ const auth = {
 
 const users = {
   me: () => get<IUser>('users/me'),
-  conversations: (uid: string) => get(`users/${uid}/conversations`)
+  conversations: (uid: string) => get(`users/${uid}/conversations`),
 }
 
 export default {

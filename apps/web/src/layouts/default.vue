@@ -2,13 +2,16 @@
   import { onMounted, ref, watch } from 'vue'
   import { useConversationStore, useUserStore } from '@/stores'
   import api from '@/api'
-  import type { IConversation } from '@ai-chat/typed'
+  import type { IConversation, IUser } from '@ai-chat/typed'
   import { formatRelativeDate } from '@/utils'
   import Tooltip from '@/components/Tooltip.vue'
   import Dropdown from '@/components/Dropdown.vue'
-import { useRoute } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
+  import { useToast } from 'vue-toastification'
 
+  const toast = useToast()
   const route = useRoute()
+  const router = useRouter()
   const userStore = useUserStore()
   const conversationStore = useConversationStore()
 
@@ -20,6 +23,7 @@ import { useRoute } from 'vue-router'
   const isCollapse = ref(true)
   const conversationHistory = ref<IConversation[]>(conversationStore.conversations)
   const renamedId = ref<string | null>(null)
+  const user = ref<IUser | null>(null)
 
   function toggleCollapse() {
     isCollapse.value = !isCollapse.value
@@ -38,9 +42,27 @@ import { useRoute } from 'vue-router'
     renamedId.value = null
   }
 
+  async function remove(id: string) {
+    const resp = await api.conversations.remove(id)
+    if(resp.success) {
+      toast.success('删除成功')
+      conversationHistory.value = conversationHistory.value.filter(item => item._id !== id)
+      conversationStore.conversations = conversationHistory.value
+    }
+    else {
+      toast.error(resp.message)
+    }
+  }
+
+  async function logout() {
+    await userStore.logout()
+    router.push('/')
+  }
+
   onMounted(async () => {
     isChecking.value = true
     const resp = await userStore.me()
+    user.value = resp
     isChecking.value = false
     if (resp && resp._id) {
       conversationHistory.value = await api.users.conversations(resp._id)
@@ -49,11 +71,11 @@ import { useRoute } from 'vue-router'
   })
 
   watch([route, conversationHistory], ([route]) => {
-    if(route.name === '/[id]') {
-      const conversationId =route.params.id
+    if (route.name === '/[id]') {
+      const conversationId = route.params.id
       const current = conversationHistory.value.filter(item => item._id === conversationId)[0]
       document.title = `${current?.title || '新对话'} | AI Chat`
-    }else {
+    } else {
       document.title = 'AI Chat'
     }
   }, {
@@ -70,7 +92,7 @@ import { useRoute } from 'vue-router'
         <span class="icon-[mingcute--menu-line] swap-off size-6"></span>
         <span class="icon-[mingcute--close-line] swap-on size-6 scale-70"></span>
       </label>
-      <div v-for="item in asideMens" :key="item.icon" class="flex items-center overflow-hidden cursor-default"
+      <div v-for="item in asideMens" :key="item.icon" class="flex items-center overflow-hidden cursor-default select-none"
         :class="{ 'hover:bg-neutral/10 transition-colors duration-300 rounded cursor-pointer': !isCollapse }"
         @click="$router.push(item.path || '')">
         <Tooltip placement="left" :disabled="!isCollapse">
@@ -95,8 +117,8 @@ import { useRoute } from 'vue-router'
         class="flex items-center px-3 py-2 hover:bg-neutral/10 rounded transition-all duration-300 cursor-pointer group"
         :class="{ 'bg-primary/10!': item._id === ($route.params as any)?.id }">
         <div v-if="item._id === renamedId" class="grow mr-2 h-[35.99px] flex items-center">
-          <input v-model="item.title" type="text" class="input input-sm w-full" @keyup.enter="handleRenameConfirm(item)" autofocus
-          @blur="handleRenameCancel" :placeholder="item.title || '新对话'" />
+          <input v-model="item.title" type="text" class="input input-sm w-full" @keyup.enter="handleRenameConfirm(item)"
+            autofocus @blur="handleRenameCancel" :placeholder="item.title || '新对话'" />
         </div>
         <RouterLink v-else :to="{ name: '/[id]', params: { id: item._id } }"
           class="grow flex flex-col items-start font-bold whitespace-nowrap">
@@ -117,7 +139,7 @@ import { useRoute } from 'vue-router'
                 重命名
               </div>
               <div class="divider my-1.5 opacity-80"></div>
-              <div class="dropdown-item rounded text-sm py-2 px-3 text-bg-soft-error hover:text-bg-error!">
+              <div class="dropdown-item rounded text-sm py-2 px-3 text-bg-soft-error hover:text-bg-error!" @click="remove(item._id)">
                 <span class="icon-[mingcute--delete-2-line]"></span>
                 删除
               </div>
@@ -126,18 +148,23 @@ import { useRoute } from 'vue-router'
         </Dropdown>
       </li>
     </ul>
-    <RouterLink v-if="userStore.isLoggedIn" to="/"
-      class="aside-footer p-2 mb-6 mx-3 flex items-center rounded transition-all duration-300"
-      :class="[isCollapse ? 'hover:[&_.avatar]:scale-125' : 'hover:bg-neutral/10']">
+    <div v-if="userStore.isLoggedIn" aria-haspopup="dialog" aria-expanded="false" aria-controls="profile-modal"
+      data-overlay="#profile-modal"
+      class="aside-footer p-2 mb-6 mx-3 flex items-center rounded transition-all duration-300 cursor-pointer"
+      :class="[isCollapse ? 'hover:[&_.avatar]:scale-110' : 'hover:bg-neutral/10']">
       <div class="avatar avatar-placeholder transition-all duration-300">
         <div class="bg-primary text-primary-content w-8 rounded-full">
-          <span>H</span>
+          <span>{{ user?.username.slice(0, 1).toUpperCase() }}</span>
         </div>
       </div>
-      <div class="whitespace-nowrap transition-opacity duration-300 ml-4" :class="{ 'opacity-0': isCollapse }">
-        Ethan Cruz
+      <div class="grow whitespace-nowrap transition-opacity duration-300 ml-4 flex items-center" :class="{ 'opacity-0': isCollapse }">
+        <span>{{ user?.username }}</span>
+        <button class="btn btn-sm btn-error btn-soft ml-auto" @click="logout">
+          <span class="icon-[mingcute--exit-line]"></span>
+          退出
+        </button>
       </div>
-    </RouterLink>
+    </div>
   </aside>
   <main class="grow flex flex-col">
     <div class="p-4 flex gap-1 justify-between items-center font-bold sticky top-0 z-50 bg-base-100">

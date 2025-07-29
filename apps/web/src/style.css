@@ -18,6 +18,10 @@ html[data-theme="dark"] .shiki span {
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
+html {
+  @apply overflow-x-hidden;
+}
+
 #app {
   @apply w-full min-h-screen flex;
 }
