@@ -13,3 +13,7 @@ interface Window {
   HSDropdown: typeof import('flyonui/flyonui').HSDropdown
   HSOverlay: typeof import('flyonui/flyonui').HSOverlay
 }
+
+interface ImportMetaEnv {
+  VITE_SERVER_DOMAIN: string
+}
