@@ -20,12 +20,24 @@ const app = express()
 const PORT = process.env.PORT
 const isDev = process.env.NODE_ENV === 'development'
 const devDomains = ['http://localhost:5173', 'http://localhost:4173']
+const allowedOrigins = isDev
+  ? [...devDomains, process.env.CLIENT_DOMAIN]
+  : [process.env.CLIENT_DOMAIN]
 
-app.use(express.static('public'))
+app.options('*', cors())
 app.use(cors({
-  origin: isDev ? [...devDomains, process.env.CLIENT_DOMAIN] : process.env.CLIENT_DOMAIN,
+  origin(origin, callback) {
+    if (!origin) {
+      return callback(null, true)
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    callback(new Error(`CORS policy: Origin ${origin} not allowed`))
+  },
   credentials: true,
 }))
+app.use(express.static('public'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
