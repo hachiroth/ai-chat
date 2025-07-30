@@ -76,7 +76,7 @@ onMounted(async () => {
   if (chattingList.value.length === 1) {
     const last = chattingList.value[0]
     if (last.role === 'user') {
-      connect(`http://localhost:3000/api/chat/${id.value}/${last._id}`)
+      connect(`${import.meta.env.VITE_SERVER_DOMAIN}chat/${id.value}/${last._id}`)
     }
   }
   
