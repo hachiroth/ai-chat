@@ -13,11 +13,9 @@ declare global {
       PORT: string
       NODE_ENV: 'development' | 'production' | 'test'
       SECRET: string
-      SPARK_ID: string
-      SPARK_SECRET: string
-      SPARK_KEY: string
       MONGO_URI: string
       SPARK_API_PASSWORD: string
+      CLIENT_DOMAIN: string
     }
   }
 

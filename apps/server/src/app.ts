@@ -8,8 +8,8 @@ import { Spark } from './Spark'
 
 (function checkEnvironment() {
   try {
-    const { PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI } = process.env
-    console.debug('Environment variables:', PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI)
+    const { PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI, CLIENT_DOMAIN } = process.env
+    console.debug('Environment variables:', PORT, NODE_ENV, SECRET, SPARK_API_PASSWORD, MONGO_URI, CLIENT_DOMAIN)
   }
   catch (err) {
     throw new Error(`Miss required environment variable. ${err}`)
@@ -18,11 +18,12 @@ import { Spark } from './Spark'
 
 const app = express()
 const PORT = process.env.PORT
-const isDev = process.env.NODE_ENV
+const isDev = process.env.NODE_ENV === 'development'
+const devDomains = ['http://localhost:5173', 'http://localhost:4173']
 
 app.use(express.static('public'))
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:4173'],
+  origin: isDev ? [...devDomains, process.env.CLIENT_DOMAIN] : process.env.CLIENT_DOMAIN,
   credentials: true,
 }))
 app.use(cookieParser())
