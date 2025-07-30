@@ -25,6 +25,7 @@ const allowedOrigins = isDev
   ? [...devDomains, process.env.CLIENT_DOMAIN]
   : [process.env.CLIENT_DOMAIN]
 
+app.set('trust proxy', 1)
 app.use(cors({
   origin(origin, callback) {
     if (!origin) {
