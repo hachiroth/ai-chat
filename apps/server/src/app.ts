@@ -24,7 +24,6 @@ const allowedOrigins = isDev
   ? [...devDomains, process.env.CLIENT_DOMAIN]
   : [process.env.CLIENT_DOMAIN]
 
-app.options('*', cors())
 app.use(cors({
   origin(origin, callback) {
     if (!origin) {
@@ -67,7 +66,7 @@ async function connectMongodb() {
   }
 }
 
-app.use(routes({ prefix: '/api' }))
+app.use(routes())
 
 app.locals.spark = new Spark({ apiPassword: process.env.SPARK_API_PASSWORD })
 
