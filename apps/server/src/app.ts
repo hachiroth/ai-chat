@@ -1,3 +1,4 @@
+import MongoStore from 'connect-mongo'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
@@ -44,6 +45,10 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 7 * 24 * 60 * 60,
+  }),
   cookie: {
     secure: !isDev,
     sameSite: 'none',
