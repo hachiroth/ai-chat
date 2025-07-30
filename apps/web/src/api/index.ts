@@ -1,9 +1,7 @@
 import type { IContext, IConversation, IUser } from '@ai-chat/typed'
 import { http } from './http'
 
-console.log(import.meta.env.MODE)
 const SERVER_DOMAIN = import.meta.env.DEV ? 'http://localhost:3000/api/' : import.meta.env.VITE_SERVER_DOMAIN
-console.log(SERVER_DOMAIN)
 
 const { get, post, put, delete: remove } = http(SERVER_DOMAIN)
 

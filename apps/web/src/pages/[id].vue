@@ -48,7 +48,7 @@ async function onSend(content: string) {
   })
 
   setTimeout(() => {
-    connect(`http://localhost:3000/api/chat/${id.value}/${contextId}`);
+    connect(`${import.meta.env.VITE_SERVER_DOMAIN}chat/${id.value}/${contextId}`)
     scrollToBottom('smooth');
   }, 100);
 }
