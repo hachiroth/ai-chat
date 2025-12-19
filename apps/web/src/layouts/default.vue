@@ -60,13 +60,18 @@
   }
 
   onMounted(async () => {
-    isChecking.value = true
-    const resp = await userStore.me()
-    user.value = resp
-    isChecking.value = false
-    if (resp && resp._id) {
-      conversationHistory.value = await api.users.conversations(resp._id)
-      conversationStore.conversations = conversationHistory.value
+    try {
+      isChecking.value = true;
+      const resp = await userStore.me();
+      user.value = resp;
+      if (resp && resp._id) {
+        conversationHistory.value = await api.users.conversations(resp._id);
+        conversationStore.conversations = conversationHistory.value;
+      }
+    } catch (err) {
+
+    } finally {
+      isChecking.value = false;
     }
   })
 
@@ -190,6 +195,10 @@
           <component :is="Component" :key="$route.fullPath" />
         </KeepAlive>
       </RouterView>
+    </div>
+    <div v-else class="fixed inset-0 flex flex-col justify-center items-center gap-2 bg-base-200/20 backdrop-blur-sm z-1000 select-none">
+      <span class="loading loading-lg animate-pulse"></span>
+      <span class="text-2xl font-bold text-base-content/70 italic animate-pulse">Spark loading...</span>
     </div>
   </main>
 </template>
