@@ -1,0 +1,14 @@
+{
+  "name": "@ac/tsconfig",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tsconfig for the repository.",
+  "exports": {
+    "./*": "./*"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.34.4"
+}

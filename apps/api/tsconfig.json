@@ -1,0 +1,9 @@
+{
+  "extends": "@ac/tsconfig/nest.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "verbatimModuleSyntax": false,
+  },
+  "include": ["src", "test"],
+}
