@@ -25,6 +25,8 @@ export class SignUpDto {
       "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
   })
   password!: string;
+
+  autoLogin?: boolean;
 }
 
 export class SignInDto {
