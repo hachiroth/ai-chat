@@ -7,6 +7,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ClsModule } from "nestjs-cls";
 import { AuthModule } from "./auth/auth.module";
 import { JwtStrategy } from "./auth/jwt.strategy";
+import { ConversationModule } from "./conversation/conversation.module";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { StatusCodeIntereptor } from "./interceptors/status-code.interceptor";
 import { UserModule } from "./user/user.module";
@@ -25,6 +26,7 @@ import { UserModule } from "./user/user.module";
       database: process.env.DB_DATABASE,
       entities: [__dirname + "/**/*.entity.{js,ts}"],
       synchronize: true,
+      logging: true,
     }),
     ClsModule.forRoot({
       global: true,
@@ -39,6 +41,7 @@ import { UserModule } from "./user/user.module";
     PassportModule,
     UserModule,
     AuthModule,
+    ConversationModule,
   ],
   controllers: [],
   providers: [
